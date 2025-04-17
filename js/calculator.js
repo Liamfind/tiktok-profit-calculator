@@ -118,69 +118,14 @@ document.addEventListener('DOMContentLoaded', function() {
     setupAutoCalc(inputs.productCardNatural, inputs.productCardAd, inputs.productCardAutoCalc);
     setupAutoCalc(inputs.videoNatural, inputs.videoAd, inputs.videoAutoCalc);
 
-    // 验证输入
-    function validateInputs() {
-        // 检查必填项（排除被禁用的输入框）
-        for (let key in inputs) {
-            const input = inputs[key];
-            if (input.tagName === 'INPUT' && !input.disabled && input.type !== 'checkbox' && input.value === '') {
-                alert('请填写所有必填项');
-                input.focus();
-                return false;
-            }
-        }
-
-        // 检查总订单分布是否为100%
-        const totalOrder = Number(inputs.totalProductCard.value || 0) + Number(inputs.totalVideo.value || 0);
-        if (Math.abs(totalOrder - 100) > 0.1) {
-            alert('商品卡订单与短视频订单的总占比必须等于100%');
-            return false;
-        }
-
-        // 检查商品卡流量分布是否为100%
-        const totalProductCard = Number(inputs.productCardNatural.value || 0) + Number(inputs.productCardAd.value || 0);
-        if (Math.abs(totalProductCard - 100) > 0.1) {
-            alert('商品卡订单的自然流量与广告流量占比之和必须等于100%');
-            return false;
-        }
-
-        // 检查短视频流量分布是否为100%
-        const totalVideo = Number(inputs.videoNatural.value || 0) + Number(inputs.videoAd.value || 0);
-        if (Math.abs(totalVideo - 100) > 0.1) {
-            alert('短视频订单的自然流量与广告流量占比之和必须等于100%');
-            return false;
-        }
-
-        return true;
-    }
-
-    // 添加计算过程展开/收起功能
-    const processToggle = document.querySelector('.process-toggle');
-    const processDetails = document.querySelector('.process-details');
-
-    processToggle.addEventListener('click', function() {
-        const isExpanded = processDetails.style.display !== 'none';
-        processDetails.style.display = isExpanded ? 'none' : 'block';
-        this.textContent = isExpanded ? '查看计算过程 ▼' : '收起计算过程 ▲';
-    });
-
-    // 切换计算过程显示
-    document.querySelector('.toggle-calculation').addEventListener('click', function() {
-        const details = document.querySelector('.calculation-details');
-        const button = this;
-        
-        if (details.style.display === 'none') {
-            details.style.display = 'block';
-            button.textContent = '收起计算过程 ▲';
-        } else {
-            details.style.display = 'none';
-            button.textContent = '查看计算过程 ▼';
-        }
-    });
-
     // 计算利润
     function calculateProfit() {
-        if (!validateInputs()) return;
+        console.log('开始计算...');
+        if (!validateInputs()) {
+            console.log('输入验证失败');
+            return;
+        }
+        console.log('输入验证通过');
 
         // 获取基础输入值
         const price = Number(inputs.productPrice.value);
@@ -190,6 +135,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const influencerRate = Number(inputs.influencerCommission.value) / 100;
         const monthlyVol = Number(inputs.monthlyVolume.value);
         const sampleQty = Number(inputs.sampleQuantity.value);
+
+        console.log('基础数据:', {
+            price,
+            cost,
+            shipping,
+            adCostPerOrder,
+            influencerRate,
+            monthlyVol,
+            sampleQty
+        });
 
         // 计算样机成本（商品成本+运输费用）* 样机数量
         const sampleCost = (cost + shipping) * sampleQty;
@@ -335,4 +290,61 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+
+    // 验证输入
+    function validateInputs() {
+        console.log('开始验证输入...');
+        // 检查必填项（排除被禁用的输入框）
+        for (let key in inputs) {
+            const input = inputs[key];
+            if (input.tagName === 'INPUT' && !input.disabled && input.type !== 'checkbox' && input.value === '') {
+                console.log('缺少必填项:', key);
+                alert('请填写所有必填项');
+                input.focus();
+                return false;
+            }
+        }
+
+        // 检查总订单分布是否为100%
+        const totalOrder = Number(inputs.totalProductCard.value || 0) + Number(inputs.totalVideo.value || 0);
+        console.log('总订单分布:', totalOrder);
+        if (Math.abs(totalOrder - 100) > 0.1) {
+            console.log('总订单分布不等于100%');
+            alert('商品卡订单与短视频订单的总占比必须等于100%');
+            return false;
+        }
+
+        // 检查商品卡流量分布是否为100%
+        const totalProductCard = Number(inputs.productCardNatural.value || 0) + Number(inputs.productCardAd.value || 0);
+        console.log('商品卡流量分布:', totalProductCard);
+        if (Math.abs(totalProductCard - 100) > 0.1) {
+            console.log('商品卡流量分布不等于100%');
+            alert('商品卡订单的自然流量与广告流量占比之和必须等于100%');
+            return false;
+        }
+
+        // 检查短视频流量分布是否为100%
+        const totalVideo = Number(inputs.videoNatural.value || 0) + Number(inputs.videoAd.value || 0);
+        console.log('短视频流量分布:', totalVideo);
+        if (Math.abs(totalVideo - 100) > 0.1) {
+            console.log('短视频流量分布不等于100%');
+            alert('短视频订单的自然流量与广告流量占比之和必须等于100%');
+            return false;
+        }
+
+        console.log('验证通过');
+        return true;
+    }
+
+    // 添加计算过程展开/收起功能
+    const processToggle = document.querySelector('.toggle-calculation');
+    const processDetails = document.querySelector('.calculation-details');
+
+    if (processToggle && processDetails) {
+        processToggle.addEventListener('click', function() {
+            const isExpanded = processDetails.style.display !== 'none';
+            processDetails.style.display = isExpanded ? 'none' : 'block';
+            this.textContent = isExpanded ? '查看计算过程 ▼' : '收起计算过程 ▲';
+        });
+    }
 }); 
