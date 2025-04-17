@@ -33,13 +33,13 @@
 
 ## 在线使用
 
-访问 [TikTok Shop 盈利计算器](https://[你的GitHub用户名].github.io/tiktok-profit-calculator/) 开始使用。
+访问 [TikTok Shop 盈利计算器](https://liamfind.github.io/tiktok-profit-calculator/) 开始使用。
 
 ## 本地运行
 
 1. 克隆仓库：
 ```bash
-git clone https://github.com/[你的GitHub用户名]/tiktok-profit-calculator.git
+git clone https://github.com/liamfind/tiktok-profit-calculator.git
 ```
 
 2. 打开 index.html 文件即可使用。
