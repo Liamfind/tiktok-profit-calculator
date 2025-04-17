@@ -101,18 +101,24 @@ label {
     font-weight: 500;
 }
 
+/* 样机数量输入框样式 */
+#sampleQuantity {
+    width: 80px;
+    text-align: center;
+}
+
+/* 确保所有数字输入框样式一致 */
 input[type="number"] {
-    width: 100%;
-    padding: 8px 12px;
-    border: 1px solid var(--border-color);
+    padding: 8px;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 16px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
 }
 
 input[type="number"]:focus {
+    border-color: #fe2c55;
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(0, 87, 183, 0.2);
 }
 
 input:disabled {
@@ -224,7 +230,7 @@ input:disabled {
     overflow: hidden;
 }
 
-.process-toggle {
+.toggle-calculation {
     width: 100%;
     padding: 12px;
     background-color: var(--primary-color);
@@ -236,16 +242,20 @@ input:disabled {
     transition: background-color 0.3s ease;
 }
 
-.process-toggle:hover {
+.toggle-calculation:hover {
     background-color: var(--primary-dark);
 }
 
-.process-details {
+.calculation-details {
     padding: 20px;
 }
 
 .process-section {
     margin-bottom: 20px;
+    background-color: var(--background-color);
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .process-section:last-child {
@@ -254,27 +264,23 @@ input:disabled {
 
 .process-section h4 {
     color: var(--primary-color);
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
 }
 
-.process-content {
-    background-color: var(--background-color);
-    padding: 15px;
+.order-distribution-details,
+.fee-calculation-details,
+.profit-calculation-details {
+    line-height: 1.8;
+}
+
+.order-distribution-details p,
+.fee-calculation-details p,
+.profit-calculation-details p {
+    margin: 8px 0;
+    padding: 8px;
+    background-color: var(--section-background);
     border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.process-content p {
-    margin: 8px 0;
-}
-
-.process-content ul {
-    margin: 8px 0;
-    padding-left: 20px;
-}
-
-.process-content li {
-    margin: 4px 0;
 }
 
 @media (min-width: 768px) {

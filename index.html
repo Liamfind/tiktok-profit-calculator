@@ -87,6 +87,10 @@
         <div class="calculator-section">
             <h2>营销成本</h2>
             <div class="input-group">
+                <label for="sampleQuantity">样机数量 (件)</label>
+                <input type="number" id="sampleQuantity" min="0" step="1" placeholder="输入邮寄给达人的样机数量">
+            </div>
+            <div class="input-group">
                 <label for="adCost">广告费用 ($/单)</label>
                 <input type="number" id="adCost" min="0" step="0.01" placeholder="输入每单广告费用">
             </div>
@@ -160,20 +164,20 @@
             </div>
 
             <div class="calculation-process">
-                <button class="process-toggle">查看计算过程 ▼</button>
-                <div class="process-details" style="display: none;">
+                <button class="toggle-calculation">查看计算过程 ▼</button>
+                <div class="calculation-details" style="display: none;">
                     <h3>计算过程详解</h3>
                     <div class="process-section">
                         <h4>1. 订单分布</h4>
-                        <div id="orderDistribution" class="process-content"></div>
+                        <div class="order-distribution-details" class="process-content"></div>
                     </div>
                     <div class="process-section">
                         <h4>2. 费用计算</h4>
-                        <div id="feeCalculation" class="process-content"></div>
+                        <div class="fee-calculation-details" class="process-content"></div>
                     </div>
                     <div class="process-section">
                         <h4>3. 利润计算</h4>
-                        <div id="profitCalculation" class="process-content"></div>
+                        <div class="profit-calculation-details" class="process-content"></div>
                     </div>
                 </div>
             </div>

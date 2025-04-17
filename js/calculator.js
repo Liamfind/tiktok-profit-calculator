@@ -14,7 +14,8 @@ document.addEventListener('DOMContentLoaded', function() {
         influencerCommission: document.getElementById('influencerCommission'),
         monthlyVolume: document.getElementById('monthlyVolume'),
         productCardAutoCalc: document.getElementById('productCardAutoCalc'),
-        videoAutoCalc: document.getElementById('videoAutoCalc')
+        videoAutoCalc: document.getElementById('videoAutoCalc'),
+        sampleQuantity: document.getElementById('sampleQuantity')
     };
 
     // 获取结果显示元素
@@ -31,7 +32,12 @@ document.addEventListener('DOMContentLoaded', function() {
         paymentFeeAmount: document.getElementById('paymentFeeAmount'),
         avgInfluencerCommission: document.getElementById('avgInfluencerCommission'),
         avgAdCost: document.getElementById('avgAdCost'),
-        shippingCostAmount: document.getElementById('shippingCostAmount')
+        shippingCostAmount: document.getElementById('shippingCostAmount'),
+        sampleCost: document.getElementById('sampleCost'),
+        sampleCostPerOrder: document.getElementById('sampleCostPerOrder'),
+        totalCost: document.getElementById('totalCost'),
+        grossProfit: document.getElementById('grossProfit'),
+        netProfit: document.getElementById('netProfit')
     };
 
     // 常量
@@ -158,6 +164,20 @@ document.addEventListener('DOMContentLoaded', function() {
         this.textContent = isExpanded ? '查看计算过程 ▼' : '收起计算过程 ▲';
     });
 
+    // 切换计算过程显示
+    document.querySelector('.toggle-calculation').addEventListener('click', function() {
+        const details = document.querySelector('.calculation-details');
+        const button = this;
+        
+        if (details.style.display === 'none') {
+            details.style.display = 'block';
+            button.textContent = '收起计算过程 ▲';
+        } else {
+            details.style.display = 'none';
+            button.textContent = '查看计算过程 ▼';
+        }
+    });
+
     // 计算利润
     function calculateProfit() {
         if (!validateInputs()) return;
@@ -169,6 +189,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const adCostPerOrder = Number(inputs.adCost.value);
         const influencerRate = Number(inputs.influencerCommission.value) / 100;
         const monthlyVol = Number(inputs.monthlyVolume.value);
+        const sampleQty = Number(inputs.sampleQuantity.value);
+
+        // 计算样机成本（商品成本+运输费用）* 样机数量
+        const sampleCost = (cost + shipping) * sampleQty;
 
         // 获取订单分布
         const productCardRate = Number(inputs.totalProductCard.value) / 100;
@@ -192,11 +216,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // 计算平均广告费用（只针对广告流量订单）
         const avgAdAmount = adCostPerOrder * totalAdRate;
 
-        // 计算总成本（删除支付手续费）
+        // 计算总成本（加入样机成本）
         const totalCost = cost + shipping + platformFeeAmount + avgInfluencerAmount + avgAdAmount;
-
-        // 计算利润
-        const profitPerItem = price - totalCost;
+        
+        // 计算每单摊销的样机成本
+        const sampleCostPerOrder = sampleCost / monthlyVol;
+        
+        // 计算实际单件利润（考虑样机摊销成本）
+        const profitPerItem = price - totalCost - sampleCostPerOrder;
         const profitMargin = (profitPerItem / price) * 100;
         const monthlyProfitAmount = profitPerItem * monthlyVol;
         const yearlyProfitAmount = monthlyProfitAmount * 12;
@@ -207,12 +234,17 @@ document.addEventListener('DOMContentLoaded', function() {
         results.monthlyProfit.textContent = formatCurrency(monthlyProfitAmount);
         results.yearlyProfit.textContent = formatCurrency(yearlyProfitAmount);
 
-        // 更新成本明细（删除支付手续费显示）
+        // 更新成本明细
         results.costBreakdown.textContent = formatCurrency(cost);
         results.platformFeeAmount.textContent = formatCurrency(platformFeeAmount);
         results.avgInfluencerCommission.textContent = formatCurrency(avgInfluencerAmount);
         results.avgAdCost.textContent = formatCurrency(avgAdAmount);
         results.shippingCostAmount.textContent = formatCurrency(shipping);
+        results.sampleCost.textContent = formatCurrency(sampleCost);
+        results.sampleCostPerOrder.textContent = formatCurrency(sampleCostPerOrder);
+        results.totalCost.textContent = formatCurrency(totalCost);
+        results.grossProfit.textContent = formatCurrency(profitPerItem);
+        results.netProfit.textContent = formatCurrency(profitPerItem - platformFeeAmount);
 
         // 根据利润率设置颜色
         const profitColor = profitMargin >= 15 ? '#4caf50' : profitMargin >= 0 ? '#ff9800' : '#fe2c55';
@@ -223,72 +255,48 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // 更新计算过程显示
         updateCalculationProcess({
+            monthlyVolume: monthlyVol,
+            quantityPerOrder: 1, // 默认每单1件
             price,
             cost,
             shipping,
-            adCostPerOrder,
-            influencerRate,
-            productCardRate,
-            videoRate,
-            productCardNaturalRate,
-            productCardAdRate,
-            videoNaturalRate,
-            videoAdRate,
-            totalAdRate,
-            platformFeeAmount,
-            avgInfluencerAmount,
-            avgAdAmount,
+            sampleQuantity: sampleQty,
+            sampleCost,
+            sampleCostPerOrder,
+            commissionRate: PLATFORM_FEE * 100,
             totalCost,
-            profitPerItem,
+            grossProfit: profitPerItem,
+            netProfit: profitPerItem - platformFeeAmount,
             profitMargin
         });
     }
 
     // 更新计算过程显示
     function updateCalculationProcess(data) {
-        // 1. 订单分布说明
-        const orderDistribution = document.getElementById('orderDistribution');
-        orderDistribution.innerHTML = `
-            <p>商品卡订单占比: ${(data.productCardRate * 100).toFixed(1)}%</p>
-            <ul>
-                <li>自然流量: ${(data.productCardNaturalRate * 100).toFixed(1)}%</li>
-                <li>广告流量: ${(data.productCardAdRate * 100).toFixed(1)}%</li>
-            </ul>
-            <p>短视频订单占比: ${(data.videoRate * 100).toFixed(1)}%</p>
-            <ul>
-                <li>自然流量: ${(data.videoNaturalRate * 100).toFixed(1)}%</li>
-                <li>广告流量: ${(data.videoAdRate * 100).toFixed(1)}%</li>
-            </ul>
-            <p>总广告流量占比: ${(data.totalAdRate * 100).toFixed(1)}%</p>
+        // 订单分布计算过程
+        document.querySelector('.order-distribution-details').innerHTML = `
+            <p>每月订单量: ${data.monthlyVolume} 单</p>
+            <p>每单产品数量: ${data.quantityPerOrder} 件</p>
+            <p>每月总销售数量: ${data.monthlyVolume * data.quantityPerOrder} 件</p>
         `;
 
-        // 2. 费用计算说明
-        const feeCalculation = document.getElementById('feeCalculation');
-        feeCalculation.innerHTML = `
-            <p>基础成本:</p>
-            <ul>
-                <li>商品成本: ${formatCurrency(data.cost)}</li>
-                <li>运输成本: ${formatCurrency(data.shipping)}</li>
-            </ul>
-            <p>平台费用:</p>
-            <ul>
-                <li>平台服务费 (${(PLATFORM_FEE * 100)}%): ${formatCurrency(data.platformFeeAmount)}</li>
-            </ul>
-            <p>营销成本:</p>
-            <ul>
-                <li>达人佣金 (${(data.influencerRate * 100).toFixed(1)}% × 短视频订单): ${formatCurrency(data.avgInfluencerAmount)}</li>
-                <li>平均广告费用 (${formatCurrency(data.adCostPerOrder)} × ${(data.totalAdRate * 100).toFixed(1)}%): ${formatCurrency(data.avgAdAmount)}</li>
-            </ul>
-            <p>总成本: ${formatCurrency(data.totalCost)}</p>
+        // 费用计算过程
+        document.querySelector('.fee-calculation-details').innerHTML = `
+            <p>产品成本: ¥${data.cost}/件</p>
+            <p>运费: ¥${data.shipping}/件</p>
+            <p>样机数量: ${data.sampleQuantity} 件</p>
+            <p>样机总成本: ¥${data.sampleCost.toFixed(2)}</p>
+            <p>每单分摊样机成本: ¥${data.sampleCostPerOrder.toFixed(2)}</p>
+            <p>平台佣金率: ${data.commissionRate}%</p>
         `;
 
-        // 3. 利润计算说明
-        const profitCalculation = document.getElementById('profitCalculation');
-        profitCalculation.innerHTML = `
-            <p>售价: ${formatCurrency(data.price)}</p>
-            <p>总成本: ${formatCurrency(data.totalCost)}</p>
-            <p>单件利润: ${formatCurrency(data.profitPerItem)}</p>
-            <p>利润率: ${formatPercentage(data.profitMargin)}</p>
+        // 利润计算过程
+        document.querySelector('.profit-calculation-details').innerHTML = `
+            <p>销售价格: ¥${data.price}/件</p>
+            <p>总成本: ¥${data.totalCost.toFixed(2)}/件</p>
+            <p>毛利润: ¥${data.grossProfit.toFixed(2)}/件</p>
+            <p>净利润: ¥${data.netProfit.toFixed(2)}/件</p>
+            <p>利润率: ${data.profitMargin.toFixed(2)}%</p>
         `;
     }
 
