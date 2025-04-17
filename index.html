@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Shop 盈利计算器</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>TikTok Shop 盈利计算器</h1>
+        
+        <div class="calculator-section">
+            <h2>基础数据</h2>
+            <div class="input-group">
+                <label for="productPrice">商品售价 ($)</label>
+                <input type="number" id="productPrice" min="0" step="0.01" placeholder="输入商品售价">
+            </div>
+            <div class="input-group">
+                <label for="productCost">商品成本 ($)</label>
+                <input type="number" id="productCost" min="0" step="0.01" placeholder="输入商品成本">
+            </div>
+            <div class="input-group">
+                <label for="shippingCost">运输成本 ($)</label>
+                <input type="number" id="shippingCost" min="0" step="0.01" placeholder="输入运输成本">
+            </div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>订单来源分布</h2>
+            <div class="distribution-section">
+                <div class="total-distribution">
+                    <h3>总订单分布</h3>
+                    <div class="input-group">
+                        <label for="totalProductCard">商品卡订单占比 (%)</label>
+                        <input type="number" id="totalProductCard" min="0" max="100" step="1" placeholder="输入商品卡订单占总订单比例">
+                    </div>
+                    <div class="input-group">
+                        <label for="totalVideo">短视频订单占比 (%)</label>
+                        <input type="number" id="totalVideo" min="0" max="100" step="1" placeholder="输入短视频订单占总订单比例">
+                    </div>
+                    <div class="total-percentage">
+                        订单分布总占比：<span id="totalOrderPercentage">0</span>%
+                    </div>
+                </div>
+
+                <div class="source-group">
+                    <h3>商品卡订单流量来源</h3>
+                    <div class="auto-calc-toggle">
+                        <input type="checkbox" id="productCardAutoCalc" class="toggle-input">
+                        <label for="productCardAutoCalc" class="toggle-label">自动计算广告占比</label>
+                    </div>
+                    <div class="input-group">
+                        <label for="productCardNatural">自然流量占比 (%)</label>
+                        <input type="number" id="productCardNatural" min="0" max="100" step="1" placeholder="商品卡自然流量占比">
+                    </div>
+                    <div class="input-group">
+                        <label for="productCardAd">广告流量占比 (%)</label>
+                        <input type="number" id="productCardAd" min="0" max="100" step="1" placeholder="商品卡广告流量占比">
+                    </div>
+                    <div class="sub-percentage">
+                        商品卡流量分布总占比：<span id="productCardPercentage">0</span>%
+                    </div>
+                </div>
+
+                <div class="source-group">
+                    <h3>短视频订单流量来源</h3>
+                    <div class="auto-calc-toggle">
+                        <input type="checkbox" id="videoAutoCalc" class="toggle-input">
+                        <label for="videoAutoCalc" class="toggle-label">自动计算广告占比</label>
+                    </div>
+                    <div class="input-group">
+                        <label for="videoNatural">自然流量占比 (%)</label>
+                        <input type="number" id="videoNatural" min="0" max="100" step="1" placeholder="短视频自然流量占比">
+                    </div>
+                    <div class="input-group">
+                        <label for="videoAd">广告流量占比 (%)</label>
+                        <input type="number" id="videoAd" min="0" max="100" step="1" placeholder="短视频广告流量占比">
+                    </div>
+                    <div class="sub-percentage">
+                        短视频流量分布总占比：<span id="videoPercentage">0</span>%
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>营销成本</h2>
+            <div class="input-group">
+                <label for="adCost">广告费用 ($/单)</label>
+                <input type="number" id="adCost" min="0" step="0.01" placeholder="输入每单广告费用">
+            </div>
+            <div class="input-group">
+                <label for="influencerCommission">达人佣金比例 (%)</label>
+                <input type="number" id="influencerCommission" min="0" max="100" step="0.1" placeholder="输入达人佣金比例">
+            </div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>平台费用</h2>
+            <div class="input-group">
+                <label for="platformFee">平台服务费</label>
+                <input type="number" id="platformFee" value="6" disabled>
+                <span class="input-note">固定为6%</span>
+            </div>
+        </div>
+
+        <div class="calculator-section">
+            <h2>销量预估</h2>
+            <div class="input-group">
+                <label for="monthlyVolume">预计月销量 (件)</label>
+                <input type="number" id="monthlyVolume" min="0" step="1" placeholder="输入预计月销量">
+            </div>
+        </div>
+
+        <button id="calculateBtn" class="calculate-btn">计算盈利</button>
+
+        <div class="results-section">
+            <h2>计算结果</h2>
+            <div class="result-group">
+                <div class="result-item">
+                    <span>平均单件利润:</span>
+                    <span id="profitPerItem">0.00 元</span>
+                </div>
+                <div class="result-item">
+                    <span>利润率:</span>
+                    <span id="profitMargin">0.00%</span>
+                </div>
+                <div class="result-item">
+                    <span>预计月利润:</span>
+                    <span id="monthlyProfit">0.00 元</span>
+                </div>
+                <div class="result-item">
+                    <span>预计年利润:</span>
+                    <span id="yearlyProfit">0.00 元</span>
+                </div>
+            </div>
+            <div class="result-breakdown">
+                <h3>成本明细 (每单)</h3>
+                <div class="result-item">
+                    <span>商品成本:</span>
+                    <span id="costBreakdown">0.00 元</span>
+                </div>
+                <div class="result-item">
+                    <span>平台服务费:</span>
+                    <span id="platformFeeAmount">0.00 元</span>
+                </div>
+                <div class="result-item">
+                    <span>平均达人佣金:</span>
+                    <span id="avgInfluencerCommission">0.00 元</span>
+                </div>
+                <div class="result-item">
+                    <span>平均广告费用:</span>
+                    <span id="avgAdCost">0.00 元</span>
+                </div>
+                <div class="result-item">
+                    <span>运输成本:</span>
+                    <span id="shippingCostAmount">0.00 元</span>
+                </div>
+            </div>
+
+            <div class="calculation-process">
+                <button class="process-toggle">查看计算过程 ▼</button>
+                <div class="process-details" style="display: none;">
+                    <h3>计算过程详解</h3>
+                    <div class="process-section">
+                        <h4>1. 订单分布</h4>
+                        <div id="orderDistribution" class="process-content"></div>
+                    </div>
+                    <div class="process-section">
+                        <h4>2. 费用计算</h4>
+                        <div id="feeCalculation" class="process-content"></div>
+                    </div>
+                    <div class="process-section">
+                        <h4>3. 利润计算</h4>
+                        <div id="profitCalculation" class="process-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/calculator.js"></script>
+</body>
+</html> 
